@@ -174,24 +174,27 @@
             return moment(`${date} ${pearlData.time[i]}`).format("DD-MMMM-YYYY h:mm A");
           });
 
+          const unixEpoch = pearlData.time.map((t, i) => ( moment(`${pearlData.date[i]} ${t}`).unix()));
+
           const airTemperatureConfig = {
             type: 'line',
             data: {
-              labels: pearlDateTime,
               datasets: [{
                 label: 'LPS35HW Sensor',
                 backgroundColor: 'rgb(218, 59, 33)',
                 borderColor: 'rgb(218, 59, 33)',
-                data: pearlData.lpsTempC,
+                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.lpsTempC[i]})),
                 fill: false,
                 pointRadius: 0,
+                lineTension: 0.1,
               }, {
                 label: 'SHT-30 Sensor',
                 fill: false,
                 backgroundColor: 'rgb(52, 119, 206)',
                 borderColor: 'rgb(52, 119, 206)',
-                data: pearlData.shtTempC,
+                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.shtTempC[i]})),
                 pointRadius: 0,
+                lineTension: 0.1,
               }],
             },
             options: {
@@ -203,6 +206,11 @@
               tooltips: {
                 mode: 'index',
                 intersect: false,
+                callbacks: {
+                  title: function(tooltipItem, data) {
+                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
+                  },
+                },
               },
               hover: {
                 mode: 'nearest',
@@ -210,6 +218,7 @@
               },
               scales: {
                 xAxes: [{
+                  type: "linear",
                   display: true,
                   scaleLabel: {
                     display: true,
@@ -221,7 +230,7 @@
                     minRotation: 0,
                     maxRotation: 0,
                     callback: function(value, index, values) {
-                      return value.split(" ")[0];
+                      return moment(value * 1000).format("DD-MMMM-YYYY");
                     }
                   },
                 }],
@@ -239,14 +248,14 @@
           const humidityConfig = {
             type: 'line',
             data: {
-              labels: pearlDateTime,
               datasets: [{
                 label: 'SHT-30 Sensor',
                 backgroundColor: 'rgb(224, 110, 60)',
                 borderColor: 'rgb(224, 110, 60)',
-                data: pearlData.shtHumidPercent,
+                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.shtHumidPercent[i]})),
                 fill: false,
                 pointRadius: 0,
+                lineTension: 0.1,
               }]
             },
             options: {
@@ -258,6 +267,11 @@
               tooltips: {
                 mode: 'index',
                 intersect: false,
+                callbacks: {
+                  title: function(tooltipItem, data) {
+                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
+                  },
+                },
               },
               hover: {
                 mode: 'nearest',
@@ -265,6 +279,7 @@
               },
               scales: {
                 xAxes: [{
+                  type: "linear",
                   display: true,
                   scaleLabel: {
                     display: true,
@@ -276,7 +291,7 @@
                     minRotation: 0,
                     maxRotation: 0,
                     callback: function(value, index, values) {
-                      return value.split(" ")[0];
+                      return moment(value * 1000).format("DD-MMMM-YYYY");
                     }
                   },
                 }],
@@ -294,14 +309,14 @@
           const windSpeedConfig = {
             type: 'line',
             data: {
-              labels: pearlDateTime,
               datasets: [{
                 label: 'SEN0170 Sensor',
                 backgroundColor: 'rgb(51, 146, 116)',
                 borderColor: 'rgb(51, 146, 116)',
-                data: pearlData.windSpeedMS,
+                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.windSpeedMS[i]})),
                 fill: false,
                 pointRadius: 0,
+                lineTension: 0.1,
               }]
             },
             options: {
@@ -313,6 +328,11 @@
               tooltips: {
                 mode: 'index',
                 intersect: false,
+                callbacks: {
+                  title: function(tooltipItem, data) {
+                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
+                  },
+                },
               },
               hover: {
                 mode: 'nearest',
@@ -320,6 +340,7 @@
               },
               scales: {
                 xAxes: [{
+                  type: "linear",
                   display: true,
                   scaleLabel: {
                     display: true,
@@ -331,7 +352,7 @@
                     minRotation: 0,
                     maxRotation: 0,
                     callback: function(value, index, values) {
-                      return value.split(" ")[0];
+                      return moment(value * 1000).format("DD-MMMM-YYYY");
                     }
                   },
                 }],
@@ -349,14 +370,14 @@
           const waterTemperatureConfig = {
             type: 'line',
             data: {
-              labels: pearlDateTime,
               datasets: [{
                 label: 'DS18B20 Sensor',
                 fill: false,
                 backgroundColor: 'rgb(54, 105, 201)',
                 borderColor: 'rgb(54, 105, 201)',
-                data: pearlData.ds18TempC,
+                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.ds18TempC[i]})),
                 pointRadius: 0,
+                lineTension: 0.1,
               }],
             },
             options: {
@@ -368,6 +389,11 @@
               tooltips: {
                 mode: 'index',
                 intersect: false,
+                callbacks: {
+                  title: function(tooltipItem, data) {
+                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
+                  },
+                },
               },
               hover: {
                 mode: 'nearest',
@@ -375,6 +401,7 @@
               },
               scales: {
                 xAxes: [{
+                  type: "linear",
                   display: true,
                   scaleLabel: {
                     display: true,
@@ -386,7 +413,7 @@
                     minRotation: 0,
                     maxRotation: 0,
                     callback: function(value, index, values) {
-                      return value.split(" ")[0];
+                      return moment(value * 1000).format("DD-MMMM-YYYY");
                     }
                   },
                 }],
@@ -404,14 +431,14 @@
           const atmosphericPressureConfig = {
             type: 'line',
             data: {
-              labels: pearlDateTime,
               datasets: [{
                 label: 'LPS35HW Sensor',
                 fill: false,
                 backgroundColor: 'rgb(153, 51, 255)',
                 borderColor: 'rgb(153, 51, 255)',
-                data: pearlData.lpsPressHpa,
+                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.lpsPressHpa[i]})),
                 pointRadius: 0,
+                lineTension: 0.1,
               }],
             },
             options: {
@@ -423,6 +450,11 @@
               tooltips: {
                 mode: 'index',
                 intersect: false,
+                callbacks: {
+                  title: function(tooltipItem, data) {
+                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
+                  },
+                },
               },
               hover: {
                 mode: 'nearest',
@@ -430,6 +462,7 @@
               },
               scales: {
                 xAxes: [{
+                  type: "linear",
                   display: true,
                   scaleLabel: {
                     display: true,
@@ -441,7 +474,7 @@
                     minRotation: 0,
                     maxRotation: 0,
                     callback: function(value, index, values) {
-                      return value.split(" ")[0];
+                      return moment(value * 1000).format("DD-MMMM-YYYY");
                     }
                   },
                 }],
@@ -459,14 +492,14 @@
           const ambientLightConfig = {
             type: 'line',
             data: {
-              labels: pearlDateTime,
               datasets: [{
                 label: 'VEML7700 Sensor',
                 fill: false,
                 backgroundColor: 'rgb(76, 76, 76)',
                 borderColor: 'rgb(76, 76, 76)',
-                data: pearlData.lux,
+                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.lux[i]})),
                 pointRadius: 0,
+                lineTension: 0.1,
               }],
             },
             options: {
@@ -478,6 +511,11 @@
               tooltips: {
                 mode: 'index',
                 intersect: false,
+                callbacks: {
+                  title: function(tooltipItem, data) {
+                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
+                  },
+                },
               },
               hover: {
                 mode: 'nearest',
@@ -485,6 +523,7 @@
               },
               scales: {
                 xAxes: [{
+                  type: "linear",
                   display: true,
                   scaleLabel: {
                     display: true,
@@ -496,7 +535,7 @@
                     minRotation: 0,
                     maxRotation: 0,
                     callback: function(value, index, values) {
-                      return value.split(" ")[0];
+                      return moment(value * 1000).format("DD-MMMM-YYYY");
                     }
                   },
                 }],
@@ -514,21 +553,22 @@
           const pearlTemperatureConfig = {
             type: 'line',
             data: {
-              labels: pearlDateTime,
               datasets: [{
                 label: 'HTU21D-F Sensor',
                 backgroundColor: 'rgb(218, 59, 33)',
                 borderColor: 'rgb(218, 59, 33)',
-                data: pearlData.htuTempC,
+                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.htuTempC[i]})),
                 fill: false,
                 pointRadius: 0,
+                lineTension: 0.1,
               }, {
                 label: 'BMP280 Sensor',
                 fill: false,
                 backgroundColor: 'rgb(52, 119, 206)',
                 borderColor: 'rgb(52, 119, 206)',
-                data: pearlData.bmpTempC,
+                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.bmpTempC[i]})),
                 pointRadius: 0,
+                lineTension: 0.1,
               }],
             },
             options: {
@@ -540,6 +580,11 @@
               tooltips: {
                 mode: 'index',
                 intersect: false,
+                callbacks: {
+                  title: function(tooltipItem, data) {
+                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
+                  },
+                },
               },
               hover: {
                 mode: 'nearest',
@@ -547,6 +592,7 @@
               },
               scales: {
                 xAxes: [{
+                  type: "linear",
                   display: true,
                   scaleLabel: {
                     display: true,
@@ -558,7 +604,7 @@
                     minRotation: 0,
                     maxRotation: 0,
                     callback: function(value, index, values) {
-                      return value.split(" ")[0];
+                      return moment(value * 1000).format("DD-MMMM-YYYY");
                     }
                   },
                 }],
@@ -576,14 +622,14 @@
           const pearlHumidityConfig = {
             type: 'line',
             data: {
-              labels: pearlDateTime,
               datasets: [{
                 label: 'HTU21D-F Sensor',
                 fill: false,
                 backgroundColor: 'rgb(255, 128, 0)',
                 borderColor: 'rgb(255, 128, 0)',
-                data: pearlData.htuHumidPercent,
+                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.htuHumidPercent[i]})),
                 pointRadius: 0,
+                lineTension: 0.1,
               }],
             },
             options: {
@@ -595,6 +641,11 @@
               tooltips: {
                 mode: 'index',
                 intersect: false,
+                callbacks: {
+                  title: function(tooltipItem, data) {
+                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
+                  },
+                },
               },
               hover: {
                 mode: 'nearest',
@@ -602,6 +653,7 @@
               },
               scales: {
                 xAxes: [{
+                  type: "linear",
                   display: true,
                   scaleLabel: {
                     display: true,
@@ -613,7 +665,7 @@
                     minRotation: 0,
                     maxRotation: 0,
                     callback: function(value, index, values) {
-                      return value.split(" ")[0];
+                      return moment(value * 1000).format("DD-MMMM-YYYY");
                     }
                   },
                 }],
@@ -631,14 +683,14 @@
           const pearlPressureConfig = {
             type: 'line',
             data: {
-              labels: pearlDateTime,
               datasets: [{
                 label: 'BMP280 Sensor',
                 fill: false,
                 backgroundColor: 'rgb(50, 50, 200)',
                 borderColor: 'rgb(50, 50, 200)',
-                data: pearlData.bmpPressPa,
+                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.bmpPressPa[i]})),
                 pointRadius: 0,
+                lineTension: 0.1,
               }],
             },
             options: {
@@ -650,6 +702,11 @@
               tooltips: {
                 mode: 'index',
                 intersect: false,
+                callbacks: {
+                  title: function(tooltipItem, data) {
+                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
+                  },
+                },
               },
               hover: {
                 mode: 'nearest',
@@ -657,6 +714,7 @@
               },
               scales: {
                 xAxes: [{
+                  type: "linear",
                   display: true,
                   scaleLabel: {
                     display: true,
@@ -668,7 +726,7 @@
                     minRotation: 0,
                     maxRotation: 0,
                     callback: function(value, index, values) {
-                      return value.split(" ")[0];
+                      return moment(value * 1000).format("DD-MMMM-YYYY");
                     }
                   },
                 }],
