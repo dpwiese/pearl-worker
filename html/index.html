@@ -172,6 +172,20 @@
 
           const unixEpoch = pearlData.time.map((t, i) => ( moment(`${pearlData.date[i]} ${t}`).unix()));
 
+          // Dirty hack to insert null data in gaps to break line plot
+          const fixGaps = (arr) => {
+            const out = [];
+            for (let i = 0; i < unixEpoch.length - 1; i++) {
+              const x = unixEpoch[i];
+              out.push({x, y: arr[i]});
+              if (unixEpoch[i+1] - x > 1500) {
+                out.push({x, y: null});
+              }
+            }
+            out.push({x: unixEpoch[unixEpoch.length - 1], y: arr[unixEpoch.length - 1]});
+            return out;
+          }
+
           const ticksOptions = {
             autoSkipPadding: 100,
             autoSkip: true,
@@ -204,7 +218,7 @@
                 label: 'LPS35HW Sensor',
                 backgroundColor: colors.red,
                 borderColor: colors.red,
-                data: unixEpoch.map((x, i) => ({x, y: pearlData.lpsTempC[i]})),
+                data: fixGaps(pearlData.lpsTempC),
                 fill: false,
                 pointRadius: 0,
                 lineTension: 0.1,
@@ -212,7 +226,7 @@
                 label: 'SHT-30 Sensor',
                 backgroundColor: colors.cerulean,
                 borderColor: colors.cerulean,
-                data: unixEpoch.map((x, i) => ({x, y: pearlData.shtTempC[i]})),
+                data: fixGaps(pearlData.shtTempC),
                 fill: false,
                 pointRadius: 0,
                 lineTension: 0.1,
@@ -247,7 +261,7 @@
                 label: 'SHT-30 Sensor',
                 backgroundColor: colors.mango,
                 borderColor: colors.mango,
-                data: unixEpoch.map((x, i) => ({x, y: pearlData.shtHumidPercent[i]})),
+                data: fixGaps(pearlData.shtHumidPercent),
                 fill: false,
                 pointRadius: 0,
                 lineTension: 0.1,
@@ -282,7 +296,7 @@
                 label: 'SEN0170 Sensor',
                 backgroundColor: colors.green,
                 borderColor: colors.green,
-                data: unixEpoch.map((x, i) => ({x, y: pearlData.windSpeedMS[i]})),
+                data: fixGaps(pearlData.windSpeedMS),
                 fill: false,
                 pointRadius: 0,
                 lineTension: 0.1,
@@ -318,7 +332,7 @@
                 fill: false,
                 backgroundColor: colors.royal,
                 borderColor: colors.royal,
-                data: unixEpoch.map((x, i) => ({x, y: pearlData.ds18TempC[i]})),
+                data: fixGaps(pearlData.ds18TempC),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
@@ -353,7 +367,7 @@
                 fill: false,
                 backgroundColor: colors.purple,
                 borderColor: colors.purple,
-                data: unixEpoch.map((x, i) => ({x, y: pearlData.lpsPressHpa[i]})),
+                data: fixGaps(pearlData.lpsPressHpa),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
@@ -388,7 +402,7 @@
                 fill: false,
                 backgroundColor: colors.gray,
                 borderColor: colors.gray,
-                data: unixEpoch.map((x, i) => ({x, y: pearlData.lux[i]})),
+                data: fixGaps(pearlData.lux),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
@@ -422,7 +436,7 @@
                 label: 'HTU21D-F Sensor',
                 backgroundColor: colors.red,
                 borderColor: colors.red,
-                data: unixEpoch.map((x, i) => ({x, y: pearlData.htuTempC[i]})),
+                data: fixGaps(pearlData.htuTempC),
                 fill: false,
                 pointRadius: 0,
                 lineTension: 0.1,
@@ -431,7 +445,7 @@
                 fill: false,
                 backgroundColor: colors.cerulean,
                 borderColor: colors.cerulean,
-                data: unixEpoch.map((x, i) => ({x, y: pearlData.bmpTempC[i]})),
+                data: fixGaps(pearlData.bmpTempC),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
@@ -466,7 +480,7 @@
                 fill: false,
                 backgroundColor: colors.orange,
                 borderColor: colors.orange,
-                data: unixEpoch.map((x, i) => ({x, y: pearlData.htuHumidPercent[i]})),
+                data: fixGaps(pearlData.htuHumidPercent),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
@@ -501,7 +515,7 @@
                 fill: false,
                 backgroundColor: colors.blue,
                 borderColor: colors.blue,
-                data: unixEpoch.map((x, i) => ({x, y: pearlData.bmpPressPa[i]})),
+                data: fixGaps(pearlData.bmpPressPa),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
