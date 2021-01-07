@@ -168,71 +168,66 @@
       async function run() {
         let response = await fetch("https://s3.amazonaws.com/followpearl.mit.edu/out.json");
         if (response.ok) {
-          let pearlData = await response.json();
-
-          const pearlDateTime = pearlData.date.map((date, i) => {
-            return moment(`${date} ${pearlData.time[i]}`).format("DD-MMMM-YYYY h:mm A");
-          });
+          const pearlData = await response.json();
 
           const unixEpoch = pearlData.time.map((t, i) => ( moment(`${pearlData.date[i]} ${t}`).unix()));
+
+          const ticksOptions = {
+            autoSkipPadding: 100,
+            autoSkip: true,
+            minRotation: 0,
+            maxRotation: 0,
+            callback: (value, index, values) => (moment(value * 1000).format("DD-MMMM-YYYY")),
+          };
+
+          const scaleLabelOptions = {
+            display: true,
+            labelString: 'Date (EST)',
+          }
+
+          const colors = {
+            blue: 'rgb(50, 50, 200)',
+            cerulean: 'rgb(52, 119, 206)',
+            gray: 'rgb(76, 76, 76)',
+            green: 'rgb(51, 146, 116)',
+            mango: 'rgb(224, 110, 60)',
+            orange: 'rgb(255, 128, 0)',
+            purple: 'rgb(153, 51, 255)',
+            red: 'rgb(218, 59, 33)',
+            royal: 'rgb(54, 105, 201)',
+          };
 
           const airTemperatureConfig = {
             type: 'line',
             data: {
               datasets: [{
                 label: 'LPS35HW Sensor',
-                backgroundColor: 'rgb(218, 59, 33)',
-                borderColor: 'rgb(218, 59, 33)',
-                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.lpsTempC[i]})),
+                backgroundColor: colors.red,
+                borderColor: colors.red,
+                data: unixEpoch.map((x, i) => ({x, y: pearlData.lpsTempC[i]})),
                 fill: false,
                 pointRadius: 0,
                 lineTension: 0.1,
               }, {
                 label: 'SHT-30 Sensor',
+                backgroundColor: colors.cerulean,
+                borderColor: colors.cerulean,
+                data: unixEpoch.map((x, i) => ({x, y: pearlData.shtTempC[i]})),
                 fill: false,
-                backgroundColor: 'rgb(52, 119, 206)',
-                borderColor: 'rgb(52, 119, 206)',
-                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.shtTempC[i]})),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
             },
             options: {
-              responsive: true,
               title: {
-                display: true,
                 text: 'Deep Pond Air Temperature',
-              },
-              tooltips: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                  title: function(tooltipItem, data) {
-                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
-                  },
-                },
-              },
-              hover: {
-                mode: 'nearest',
-                intersect: true,
               },
               scales: {
                 xAxes: [{
                   type: "linear",
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Date (EST)',
-                  },
-                  ticks: {
-                    autoSkipPadding: 100,
-                    autoSkip: true,
-                    minRotation: 0,
-                    maxRotation: 0,
-                    callback: function(value, index, values) {
-                      return moment(value * 1000).format("DD-MMMM-YYYY");
-                    }
-                  },
+                  scaleLabel: scaleLabelOptions,
+                  ticks: ticksOptions,
                 }],
                 yAxes: [{
                   display: true,
@@ -250,50 +245,24 @@
             data: {
               datasets: [{
                 label: 'SHT-30 Sensor',
-                backgroundColor: 'rgb(224, 110, 60)',
-                borderColor: 'rgb(224, 110, 60)',
-                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.shtHumidPercent[i]})),
+                backgroundColor: colors.mango,
+                borderColor: colors.mango,
+                data: unixEpoch.map((x, i) => ({x, y: pearlData.shtHumidPercent[i]})),
                 fill: false,
                 pointRadius: 0,
                 lineTension: 0.1,
               }]
             },
             options: {
-              responsive: true,
               title: {
-                display: true,
                 text: 'Deep Pond Relative Humidity',
-              },
-              tooltips: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                  title: function(tooltipItem, data) {
-                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
-                  },
-                },
-              },
-              hover: {
-                mode: 'nearest',
-                intersect: true,
               },
               scales: {
                 xAxes: [{
                   type: "linear",
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Date (EST)'
-                  },
-                  ticks: {
-                    autoSkipPadding: 100,
-                    autoSkip: true,
-                    minRotation: 0,
-                    maxRotation: 0,
-                    callback: function(value, index, values) {
-                      return moment(value * 1000).format("DD-MMMM-YYYY");
-                    }
-                  },
+                  scaleLabel: scaleLabelOptions,
+                  ticks: ticksOptions,
                 }],
                 yAxes: [{
                   display: true,
@@ -311,50 +280,24 @@
             data: {
               datasets: [{
                 label: 'SEN0170 Sensor',
-                backgroundColor: 'rgb(51, 146, 116)',
-                borderColor: 'rgb(51, 146, 116)',
-                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.windSpeedMS[i]})),
+                backgroundColor: colors.green,
+                borderColor: colors.green,
+                data: unixEpoch.map((x, i) => ({x, y: pearlData.windSpeedMS[i]})),
                 fill: false,
                 pointRadius: 0,
                 lineTension: 0.1,
               }]
             },
             options: {
-              responsive: true,
               title: {
-                display: true,
                 text: 'Deep Pond Wind Speed',
-              },
-              tooltips: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                  title: function(tooltipItem, data) {
-                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
-                  },
-                },
-              },
-              hover: {
-                mode: 'nearest',
-                intersect: true,
               },
               scales: {
                 xAxes: [{
                   type: "linear",
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Date (EST)'
-                  },
-                  ticks: {
-                    autoSkipPadding: 100,
-                    autoSkip: true,
-                    minRotation: 0,
-                    maxRotation: 0,
-                    callback: function(value, index, values) {
-                      return moment(value * 1000).format("DD-MMMM-YYYY");
-                    }
-                  },
+                  scaleLabel: scaleLabelOptions,
+                  ticks: ticksOptions,
                 }],
                 yAxes: [{
                   display: true,
@@ -373,49 +316,23 @@
               datasets: [{
                 label: 'DS18B20 Sensor',
                 fill: false,
-                backgroundColor: 'rgb(54, 105, 201)',
-                borderColor: 'rgb(54, 105, 201)',
-                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.ds18TempC[i]})),
+                backgroundColor: colors.royal,
+                borderColor: colors.royal,
+                data: unixEpoch.map((x, i) => ({x, y: pearlData.ds18TempC[i]})),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
             },
             options: {
-              responsive: true,
               title: {
-                display: true,
                 text: 'Deep Pond Water Temperature',
-              },
-              tooltips: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                  title: function(tooltipItem, data) {
-                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
-                  },
-                },
-              },
-              hover: {
-                mode: 'nearest',
-                intersect: true,
               },
               scales: {
                 xAxes: [{
                   type: "linear",
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Date (EST)',
-                  },
-                  ticks: {
-                    autoSkipPadding: 100,
-                    autoSkip: true,
-                    minRotation: 0,
-                    maxRotation: 0,
-                    callback: function(value, index, values) {
-                      return moment(value * 1000).format("DD-MMMM-YYYY");
-                    }
-                  },
+                  scaleLabel: scaleLabelOptions,
+                  ticks: ticksOptions,
                 }],
                 yAxes: [{
                   display: true,
@@ -434,49 +351,23 @@
               datasets: [{
                 label: 'LPS35HW Sensor',
                 fill: false,
-                backgroundColor: 'rgb(153, 51, 255)',
-                borderColor: 'rgb(153, 51, 255)',
-                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.lpsPressHpa[i]})),
+                backgroundColor: colors.purple,
+                borderColor: colors.purple,
+                data: unixEpoch.map((x, i) => ({x, y: pearlData.lpsPressHpa[i]})),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
             },
             options: {
-              responsive: true,
               title: {
-                display: true,
                 text: 'Deep Pond Atmospheric Pressure',
-              },
-              tooltips: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                  title: function(tooltipItem, data) {
-                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
-                  },
-                },
-              },
-              hover: {
-                mode: 'nearest',
-                intersect: true,
               },
               scales: {
                 xAxes: [{
                   type: "linear",
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Date (EST)',
-                  },
-                  ticks: {
-                    autoSkipPadding: 100,
-                    autoSkip: true,
-                    minRotation: 0,
-                    maxRotation: 0,
-                    callback: function(value, index, values) {
-                      return moment(value * 1000).format("DD-MMMM-YYYY");
-                    }
-                  },
+                  scaleLabel: scaleLabelOptions,
+                  ticks: ticksOptions,
                 }],
                 yAxes: [{
                   display: true,
@@ -495,49 +386,23 @@
               datasets: [{
                 label: 'VEML7700 Sensor',
                 fill: false,
-                backgroundColor: 'rgb(76, 76, 76)',
-                borderColor: 'rgb(76, 76, 76)',
-                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.lux[i]})),
+                backgroundColor: colors.gray,
+                borderColor: colors.gray,
+                data: unixEpoch.map((x, i) => ({x, y: pearlData.lux[i]})),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
             },
             options: {
-              responsive: true,
               title: {
-                display: true,
                 text: 'Deep Pond Ambient Light',
-              },
-              tooltips: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                  title: function(tooltipItem, data) {
-                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
-                  },
-                },
-              },
-              hover: {
-                mode: 'nearest',
-                intersect: true,
               },
               scales: {
                 xAxes: [{
                   type: "linear",
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Date (EST)',
-                  },
-                  ticks: {
-                    autoSkipPadding: 100,
-                    autoSkip: true,
-                    minRotation: 0,
-                    maxRotation: 0,
-                    callback: function(value, index, values) {
-                      return moment(value * 1000).format("DD-MMMM-YYYY");
-                    }
-                  },
+                  scaleLabel: scaleLabelOptions,
+                  ticks: ticksOptions,
                 }],
                 yAxes: [{
                   display: true,
@@ -555,58 +420,32 @@
             data: {
               datasets: [{
                 label: 'HTU21D-F Sensor',
-                backgroundColor: 'rgb(218, 59, 33)',
-                borderColor: 'rgb(218, 59, 33)',
-                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.htuTempC[i]})),
+                backgroundColor: colors.red,
+                borderColor: colors.red,
+                data: unixEpoch.map((x, i) => ({x, y: pearlData.htuTempC[i]})),
                 fill: false,
                 pointRadius: 0,
                 lineTension: 0.1,
               }, {
                 label: 'BMP280 Sensor',
                 fill: false,
-                backgroundColor: 'rgb(52, 119, 206)',
-                borderColor: 'rgb(52, 119, 206)',
-                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.bmpTempC[i]})),
+                backgroundColor: colors.cerulean,
+                borderColor: colors.cerulean,
+                data: unixEpoch.map((x, i) => ({x, y: pearlData.bmpTempC[i]})),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
             },
             options: {
-              responsive: true,
               title: {
-                display: true,
                 text: 'PEARL Electronics Temperature',
-              },
-              tooltips: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                  title: function(tooltipItem, data) {
-                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
-                  },
-                },
-              },
-              hover: {
-                mode: 'nearest',
-                intersect: true,
               },
               scales: {
                 xAxes: [{
                   type: "linear",
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Date (EST)',
-                  },
-                  ticks: {
-                    autoSkipPadding: 100,
-                    autoSkip: true,
-                    minRotation: 0,
-                    maxRotation: 0,
-                    callback: function(value, index, values) {
-                      return moment(value * 1000).format("DD-MMMM-YYYY");
-                    }
-                  },
+                  scaleLabel: scaleLabelOptions,
+                  ticks: ticksOptions,
                 }],
                 yAxes: [{
                   display: true,
@@ -625,49 +464,23 @@
               datasets: [{
                 label: 'HTU21D-F Sensor',
                 fill: false,
-                backgroundColor: 'rgb(255, 128, 0)',
-                borderColor: 'rgb(255, 128, 0)',
-                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.htuHumidPercent[i]})),
+                backgroundColor: colors.orange,
+                borderColor: colors.orange,
+                data: unixEpoch.map((x, i) => ({x, y: pearlData.htuHumidPercent[i]})),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
             },
             options: {
-              responsive: true,
               title: {
-                display: true,
                 text: 'PEARL Electronics Humidity',
-              },
-              tooltips: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                  title: function(tooltipItem, data) {
-                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
-                  },
-                },
-              },
-              hover: {
-                mode: 'nearest',
-                intersect: true,
               },
               scales: {
                 xAxes: [{
                   type: "linear",
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Date (EST)',
-                  },
-                  ticks: {
-                    autoSkipPadding: 100,
-                    autoSkip: true,
-                    minRotation: 0,
-                    maxRotation: 0,
-                    callback: function(value, index, values) {
-                      return moment(value * 1000).format("DD-MMMM-YYYY");
-                    }
-                  },
+                  scaleLabel: scaleLabelOptions,
+                  ticks: ticksOptions,
                 }],
                 yAxes: [{
                   display: true,
@@ -686,49 +499,23 @@
               datasets: [{
                 label: 'BMP280 Sensor',
                 fill: false,
-                backgroundColor: 'rgb(50, 50, 200)',
-                borderColor: 'rgb(50, 50, 200)',
-                data: pearlData.date.map((date, i) => ({x: unixEpoch[i], y: pearlData.bmpPressPa[i]})),
+                backgroundColor: colors.blue,
+                borderColor: colors.blue,
+                data: unixEpoch.map((x, i) => ({x, y: pearlData.bmpPressPa[i]})),
                 pointRadius: 0,
                 lineTension: 0.1,
               }],
             },
             options: {
-              responsive: true,
               title: {
-                display: true,
                 text: 'PEARL Electronics Pressure',
-              },
-              tooltips: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                  title: function(tooltipItem, data) {
-                    return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
-                  },
-                },
-              },
-              hover: {
-                mode: 'nearest',
-                intersect: true,
               },
               scales: {
                 xAxes: [{
                   type: "linear",
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Date (EST)',
-                  },
-                  ticks: {
-                    autoSkipPadding: 100,
-                    autoSkip: true,
-                    minRotation: 0,
-                    maxRotation: 0,
-                    callback: function(value, index, values) {
-                      return moment(value * 1000).format("DD-MMMM-YYYY");
-                    }
-                  },
+                  scaleLabel: scaleLabelOptions,
+                  ticks: ticksOptions,
                 }],
                 yAxes: [{
                   display: true,
@@ -743,6 +530,21 @@
 
           // Set chart label font size
           Chart.defaults.global.defaultFontSize = window.innerWidth < 768 ? 8 : 14;
+
+          // Set tooltip timestamp
+          Chart.defaults.global.tooltips.mode = 'index';
+          Chart.defaults.global.tooltips.intersect = false;
+          Chart.defaults.global.tooltips.callbacks.title = function(tooltipItem, data) {
+            return moment(tooltipItem[0].label * 1000).format("DD-MMMM-YYYY h:mm A");
+          };
+
+          // Reponsive chart with title
+          Chart.defaults.global.responsive = true;
+          Chart.defaults.global.title.display = true;
+
+          // Set hover
+          Chart.defaults.global.hover.mode = 'nearest';
+          Chart.defaults.global.hover.intersect = true;
 
           // Increase space between legend and chart area
           Chart.Legend.prototype.afterFit = function() {
