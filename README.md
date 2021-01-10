@@ -60,3 +60,12 @@ This cronjob can be equivalently scheduled on your local machine with `crontab -
 # Pull and process PEARL data every hour on the hour
 0 * * * * root cd /path/to/pearl-worker && /path/to/node ./worker.js > /your/output/dir/cron.log
 ```
+
+# API
+
+A simple API is available at the endpoint below.
+It will take a POST request and append the data to each of the sensor arrays in `out2.json`.
+
+```sh
+% curl -X POST https://r5dubsxt0d.execute-api.us-east-1.amazonaws.com/pearl-dev -d '{"date":"2021-01-05","time":"12:47:03","bmpTempC":"1.23","lpsTempC":"2.99","shtTempC":"1.11","shtHumidPercent":"99.99","windSpeedMS": "0.9876","ds18TempC":"4.44","lpsPressHpa":"1011.11","lux":"10501.27","htuTempC":"9.99","htuHumidPercent":"30.30","bmpPressPa":"1009.99"}'
+```
